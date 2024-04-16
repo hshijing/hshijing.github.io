@@ -415,6 +415,179 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://hshijing.github.io/2024/04/16/%E6%90%9C%E7%B4%A2%E4%BC%98%E5%8C%96/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="黄信殿">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/favicon-16x16-next.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Huang Xindian Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2024/04/16/%E6%90%9C%E7%B4%A2%E4%BC%98%E5%8C%96/" itemprop="url">搜索建议优化方案</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2024-04-16T00:00:00+08:00">
+                2024-04-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%89%8D%E7%AB%AF/" itemprop="url" rel="index">
+                    <span itemprop="name">前端</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2024/04/16/%E6%90%9C%E7%B4%A2%E4%BC%98%E5%8C%96/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2024/04/16/搜索优化/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="搜索建议优化方案"><a href="#搜索建议优化方案" class="headerlink" title="搜索建议优化方案"></a>搜索建议优化方案</h1><h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>在搜索框中，用户输入关键词后，服务器会根据关键词自动补全，并展示在搜索框下方的下拉列表中，如果用户输入的很快，我们应该每个请求都发吗？请求的顺序是否能与响应的顺序一致？</p>
+<h2 id="目标"><a href="#目标" class="headerlink" title="目标"></a>目标</h2><ol>
+<li>保证用户输入的关键词与服务器返回的关键词顺序一致。</li>
+<li>减少请求次数。</li>
+</ol>
+<h3 id="方案"><a href="#方案" class="headerlink" title="方案"></a>方案</h3><p><strong>使用防抖</strong></p>
+<ul>
+<li>也就是在一段时间内只发送最后一次请求，一段时间内连续请求会取消上一次的请求。</li>
+<li>那如果用户在请求成功发送，服务器还没响应的期间再次发送请求呢？服务器能保证响应的顺序吗？</li>
+<li>所以防抖也没解决根源性问题</li>
+</ul>
+<p><strong>使用节流</strong></p>
+<ul>
+<li>也就是在一段时间内只发送第一次请求，后续请求不在处理。</li>
+<li>用户快速输入节流无法处理</li>
+</ul>
+<p><strong>优解方案</strong></p>
+<ul>
+<li>在每次请求放送时，取消上一次的请求。</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> search = <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&quot;#app .search&quot;</span>);</span><br><span class="line"><span class="comment">//创建一个控制器</span></span><br><span class="line"><span class="keyword">let</span> controller;</span><br><span class="line">search.<span class="property">onchange</span> = <span class="keyword">async</span> (e) =&gt; &#123;</span><br><span class="line">  <span class="comment">//取消上一次的请求</span></span><br><span class="line">  controller &amp;&amp; controller.<span class="title function_">abort</span>();</span><br><span class="line">  controller = <span class="keyword">new</span> <span class="title class_">AbortController</span>();</span><br><span class="line">  <span class="keyword">const</span> res = <span class="keyword">await</span> <span class="title function_">fetch</span>(</span><br><span class="line">    <span class="string">&quot;http://localhost:3000/search?keyword=&quot;</span> + e.<span class="property">target</span>.<span class="property">value</span>,</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">method</span>: <span class="string">&quot;GET&quot;</span>,</span><br><span class="line">      <span class="comment">//关联控制器</span></span><br><span class="line">      <span class="attr">signal</span>: controller.<span class="property">signal</span>,</span><br><span class="line">    &#125;</span><br><span class="line">  );</span><br><span class="line">  <span class="keyword">const</span> data = <span class="keyword">await</span> res.<span class="title function_">json</span>();</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(data);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="https://hshijing.github.io/2024/04/15/Mysql/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -642,7 +815,7 @@
               
                 <a href="/archives/%7C%7C%20archive">
               
-                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-count">3</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
