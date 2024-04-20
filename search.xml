@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>4.20随记</title>
+    <url>/2024/04/20/420/</url>
+    <content><![CDATA[<h1 id="4-20随记"><a href="#4-20随记" class="headerlink" title="4.20随记"></a>4.20随记</h1><h2 id="1-今日学习"><a href="#1-今日学习" class="headerlink" title="1. 今日学习"></a>1. 今日学习</h2><p>完成毕业设计，完成数据库设计。搭建小程序开发环境。</p>
+<h2 id="2-今日心情"><a href="#2-今日心情" class="headerlink" title="2. 今日心情"></a>2. 今日心情</h2><p>一般</p>
+]]></content>
+      <categories>
+        <category>生活点滴</category>
+      </categories>
+      <tags>
+        <tag>记录</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>随记</title>
+    <url>/2024/04/19/419/</url>
+    <content><![CDATA[<h2 id="随记"><a href="#随记" class="headerlink" title="随记"></a>随记</h2><p>今天也是学了一下uniapp来开发微信小程序，给我的感觉是挺简单的，很多东西官方团队都封装的很好,唯一吐槽点 官方文档能不能整理一下，这么优秀的团队文档简直就是一坨</p>
+]]></content>
+      <categories>
+        <category>前端</category>
+      </categories>
+      <tags>
+        <tag>uniapp</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Mysql基本语法</title>
+    <url>/2024/04/17/Mysql/</url>
+    <content><![CDATA[<p><strong>knex</strong></p>
+<ul>
+<li>基于js的查询生成器,允许使用js代码来生成qsl语句<br><em><strong>新建数据库</strong></em><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> DATABASE `<span class="keyword">user</span>` </span><br></pre></td></tr></table></figure>
+<em><strong>设置编码</strong></em><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">DEFAULT</span> <span class="type">CHARACTER</span> <span class="keyword">SET</span> <span class="operator">=</span> <span class="string">&#x27;utf8mb4&#x27;</span>;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p><em><strong>新建表</strong></em></p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> users(</span><br><span class="line">  id <span class="type">INT</span> <span class="keyword">NOT</span> <span class="keyword">NULL</span> <span class="keyword">PRIMARY</span> KEY AUTO_INCREMENT ,</span><br><span class="line">  name <span class="type">VARCHAR</span>(<span class="number">20</span>) <span class="keyword">NOT</span> <span class="keyword">NULL</span> COMMENT <span class="string">&#x27;姓名&#x27;</span>,</span><br><span class="line">  age <span class="type">INT</span> <span class="keyword">NOT</span> <span class="keyword">NULL</span> COMMENT <span class="string">&#x27;年龄&#x27;</span>,</span><br><span class="line">  gender <span class="type">VARCHAR</span>(<span class="number">10</span>) <span class="keyword">NOT</span> <span class="keyword">NULL</span> COMMENT <span class="string">&#x27;性别&#x27;</span>,</span><br><span class="line">  create_time <span class="type">TIMESTAMP</span> <span class="keyword">DEFAULT</span> <span class="built_in">CURRENT_TIMESTAMP</span> COMMENT <span class="string">&#x27;创建时间&#x27;</span></span><br><span class="line">)COMMENT <span class="string">&#x27;用户表&#x27;</span>; </span><br></pre></td></tr></table></figure>
+<ul>
+<li>id int类型(INT)  非空校验(NOT NULL ) 主键(PRIMARY KEY) 自增(AUTO_INCREMENT)</li>
+<li>TIMESTAMP(时间戳) DEFAULT(默认值)</li>
+<li>COMMENT (注释)</li>
+</ul>
+<p><em><strong>删除表格</strong></em></p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">DROP</span> <span class="keyword">TABLE</span> `users`;</span><br></pre></td></tr></table></figure>
+
+<p><em><strong>重命名表</strong></em></p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">AFTER <span class="keyword">TABLE</span> <span class="string">&#x27;users&#x27;</span> RENAME <span class="string">&#x27;user&#x27;</span></span><br></pre></td></tr></table></figure>
+<p><em><strong>给表格添加字段</strong></em></p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> `users` <span class="keyword">ADD</span> <span class="keyword">COLUMN</span> `address` <span class="type">VARCHAR</span>(<span class="number">50</span>) <span class="keyword">NOT</span> <span class="keyword">NULL</span> COMMENT <span class="string">&#x27;地址&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p><em><strong>删除字段</strong></em></p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> `users` <span class="keyword">DROP</span> <span class="keyword">COLUMN</span> `address`;</span><br></pre></td></tr></table></figure>
+<p><em><strong>修改字段</strong></em><br> <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> `users` MODIFY <span class="keyword">COLUMN</span> `address` <span class="type">VARCHAR</span>(<span class="number">100</span>) <span class="keyword">NOT</span> <span class="keyword">NULL</span> COMMENT <span class="string">&#x27;家庭住址&#x27;</span>;</span><br></pre></td></tr></table></figure></p>
+<p><em><strong>查询字段</strong></em></p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">查询单个字段</span><br><span class="line"><span class="keyword">SELECT</span> id <span class="keyword">FROM</span> `users`;</span><br><span class="line"></span><br><span class="line">查询多个字段</span><br><span class="line"><span class="keyword">SELECT</span> id,name <span class="keyword">FROM</span> `users`;</span><br><span class="line"></span><br><span class="line">查询所有字段</span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> `users`;</span><br><span class="line"></span><br><span class="line">查询字段并重命名</span><br><span class="line"><span class="keyword">SELECT</span> id <span class="keyword">AS</span> user_id <span class="keyword">FROM</span> `users`;</span><br><span class="line"></span><br><span class="line">排序  <span class="keyword">DESC</span>(降序)  <span class="keyword">ASC</span>(升序) 默认升序</span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> `users` <span class="keyword">ORDER</span> <span class="keyword">BY</span> age <span class="keyword">DESC</span>;</span><br><span class="line"></span><br><span class="line">限制查询结果(类似于分页) LIMIT <span class="number">2</span> 指定从头开始查询多少条数据</span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> `users` LIMIT <span class="number">2</span>;</span><br><span class="line">  </span><br><span class="line">限制查询结果(类似于分页) LIMIT <span class="number">2</span>,<span class="number">2</span> 指定从第几个开始查询多少条数据</span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> `users` LIMIT <span class="number">2</span>,<span class="number">2</span>;</span><br><span class="line"></span><br><span class="line">模糊查询 在gender字段下 模糊搜索 以<span class="string">&#x27;女&#x27;</span>结尾 <span class="operator">%</span> 匹配<span class="number">0</span>个或多个</span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> `users` <span class="keyword">WHERE</span> gender <span class="keyword">LIKE</span> <span class="string">&#x27;%女&#x27;</span>;</span><br><span class="line"></span><br><span class="line"> 逻辑查询 年龄大于<span class="number">18</span> 且性别为女</span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> `users` <span class="keyword">WHERE</span> age<span class="operator">&gt;</span><span class="number">18</span> <span class="keyword">AND</span> gender<span class="operator">=</span><span class="string">&#x27;女&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p><em><strong>新增</strong></em><br>新增 INSERT INTO 表名(列名,…) VALUES(值,…) </p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> users(`name`,`age`,`gender`,`address`) <span class="keyword">VALUES</span>(<span class="string">&#x27;李四&#x27;</span>,<span class="number">30</span>,<span class="string">&#x27;男&#x27;</span>,<span class="string">&#x27;广西&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<p><em><strong>更新</strong></em><br>更新 UPDATE <code>表名</code> SET  (字段)key-value(值),key-value WHERE 条件</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">UPDATE</span> `users` <span class="keyword">SET</span> name<span class="operator">=</span><span class="string">&#x27;xd&#x27;</span>,age<span class="operator">=</span><span class="number">20</span>,gender<span class="operator">=</span><span class="string">&#x27;man&#x27;</span>,address<span class="operator">=</span><span class="string">&#x27;防城港&#x27;</span> <span class="keyword">WHERE</span> id<span class="operator">=</span><span class="number">2</span></span><br></pre></td></tr></table></figure>
+
+<p><em><strong>删除</strong></em></p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">-- DELETE FROM 表名 WHERE 条件</span></span><br><span class="line"><span class="keyword">DELETE</span> <span class="keyword">FROM</span> `users` <span class="keyword">WHERE</span> id<span class="operator">=</span><span class="number">2</span></span><br><span class="line"><span class="comment">-- 批量删除  DELETE FROM 表名 WHERE 条件 IN(值1,值2,值3,...)</span></span><br><span class="line"><span class="keyword">DELETE</span> <span class="keyword">FROM</span> `users` <span class="keyword">WHERE</span> id <span class="keyword">IN</span>(<span class="number">1</span>,<span class="number">3</span>,<span class="number">5</span>)</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>后端</category>
+      </categories>
+      <tags>
+        <tag>Mysql</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>深入forEach</title>
+    <url>/2024/04/16/forEach/</url>
+    <content><![CDATA[<h1 id="在使用-forEach-时的一些现象"><a href="#在使用-forEach-时的一些现象" class="headerlink" title="在使用 forEach 时的一些现象"></a>在使用 forEach 时的一些现象</h1><ol>
+<li>为什么次添加一个元素到数组不会陷入死循环？</li>
+</ol>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> arr = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];</span><br><span class="line">arr.<span class="title function_">forEach</span>(<span class="function">(<span class="params">item</span>) =&gt;</span> &#123;</span><br><span class="line">  arr.<span class="title function_">push</span>(<span class="string">&quot;x&quot;</span>);</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;arr&quot;</span>, item); <span class="comment">//arr 1 arr 2  arr 3</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>为什么下标为 1 的元素没有删除？</li>
+</ol>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> arr = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];</span><br><span class="line">arr.<span class="title function_">forEach</span>(<span class="function">(<span class="params">item, i</span>) =&gt;</span> &#123;</span><br><span class="line">  arr.<span class="title function_">splice</span>(i, <span class="number">1</span>);</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;arr&quot;</span>, item); <span class="comment">//arr 1  arr 3</span></span><br><span class="line">&#125;);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(arr); <span class="comment">//[2]</span></span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>为什么存在稀疏元素时 会跳过稀疏数组？</li>
+</ol>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> arr = [, , <span class="number">3</span>];</span><br><span class="line">arr.<span class="title function_">forEach</span>(<span class="function">(<span class="params">item</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;arr&quot;</span>, item); <span class="comment">//  arr 3</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<h1 id="解答"><a href="#解答" class="headerlink" title="解答"></a>解答</h1><ol>
+<li><p>首先深入了解一下 forEach 的实现(图片引用自<a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach">MDN</a><br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/../img/forEach.png" alt="forEach"></p>
+</li>
+<li><p><strong>ecma2023</strong>版 forEach 实现流程<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/../img/forEachEcma.png" alt="forEach2023"></p>
+</li>
+<li><p>forEach 的实现</p>
+</li>
+</ol>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> arr = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];</span><br><span class="line"></span><br><span class="line"><span class="title class_">Array</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">forEach</span> = <span class="keyword">function</span> (<span class="params">callback</span>) &#123;</span><br><span class="line">  <span class="comment">//Let O be ? ToObject(this value)--&gt;this 指向当前的数组</span></span><br><span class="line">  <span class="comment">//  Let len be ? LengthOfArrayLike(O).--&gt; 确定数组的长度</span></span><br><span class="line">  <span class="keyword">const</span> len = <span class="variable language_">this</span>.<span class="property">length</span>;</span><br><span class="line">  <span class="comment">//If IsCallable(callbackfn) is false, throw a TypeError exception-&gt; 判断callback是否为函数</span></span><br><span class="line">  <span class="keyword">if</span> (<span class="keyword">typeof</span> callback !== <span class="string">&quot;function&quot;</span>) &#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">TypeError</span>(callback + <span class="string">&quot;is not a function&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">//Let k be 0 --&gt; 定义k的初始值 感觉是下标</span></span><br><span class="line">  <span class="keyword">let</span> k = <span class="number">0</span>;</span><br><span class="line">  <span class="comment">//Repeat, while k &lt; len --&gt;开始迭代</span></span><br><span class="line">  <span class="keyword">while</span> (k &lt; len) &#123;</span><br><span class="line">    <span class="comment">//Let kPresent be ? HasProperty(O, Pk).判断当前下标是否在数组中</span></span><br><span class="line">    <span class="comment">//这里就是跳过稀疏元素的原因</span></span><br><span class="line">    <span class="keyword">if</span> (k <span class="keyword">in</span> <span class="variable language_">this</span>) &#123;</span><br><span class="line">      <span class="title function_">callback</span>(<span class="variable language_">this</span>[k], k, <span class="variable language_">this</span>); <span class="comment">// 执行回调函数</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//Increase k by 1. --&gt;指向下一个元素</span></span><br><span class="line">    k++;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">arr.<span class="title function_">forEach</span>(<span class="function">(<span class="params">item</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;arr&quot;</span>, item); <span class="comment">//  arr 3</span></span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(arr); <span class="comment">// [2]</span></span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li>为什么元素 2 无法够删除成功？</li>
+</ol>
+<ul>
+<li>第一次执行时，k&#x3D;0，k in this 返回 true，执行 callback，删除下标为 0 的 1，k++，k&#x3D;1,arr&#x3D;[2,3]</li>
+<li>第二次执行时，k&#x3D;1，k in this 返回 true，执行 callback，删除下标为 1 的三，k++，k&#x3D;2 arr&#x3D;[2]</li>
+<li>第三次执行时，k&#x3D;2,此时数组中已不存在下标为 2 的元素 k in this 返回 false，跳出循环</li>
+</ul>
+<ol start="5">
+<li>为什么不会陷入死循环？</li>
+</ol>
+<ul>
+<li>因为刚开始循环数组时 数组的长度已经确定了</li>
+<li>在当前作用域不论你怎么修改数组的长度也无法影响 forEach 的执行</li>
+</ul>
+]]></content>
+      <categories>
+        <category>前端</category>
+      </categories>
+      <tags>
+        <tag>js</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>LRU缓存置换</title>
+    <url>/2024/04/17/LRU/</url>
+    <content><![CDATA[<h1 id="LRU-缓存置换"><a href="#LRU-缓存置换" class="headerlink" title="LRU 缓存置换"></a>LRU 缓存置换</h1><ul>
+<li>LRU（Least Recently Used）(最久未使用)缓存置换算法</li>
+<li>在限定的空间已存满数据时，再要增加缓存应当先把一个最近未使用的数据置换出去，然后把新的数据插入到缓存中。</li>
+</ul>
+<h1 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h1><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">LRUCache</span> &#123;</span><br><span class="line">  #map;</span><br><span class="line">  #length;</span><br><span class="line">  <span class="title function_">constructor</span>(<span class="params">len</span>) &#123;</span><br><span class="line">    <span class="variable language_">this</span>.#length = len;</span><br><span class="line">    <span class="variable language_">this</span>.#map = <span class="keyword">new</span> <span class="title class_">Map</span>();</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="title function_">has</span>(<span class="params">key</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="variable language_">this</span>.#map.<span class="title function_">has</span>(key);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">//获取缓存-&gt;获取到了就是最新的缓存访问，所以需要添加到队列头部</span></span><br><span class="line">  <span class="title function_">get</span>(<span class="params">key</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (!<span class="variable language_">this</span>.<span class="title function_">has</span>(key)) <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    <span class="keyword">let</span> value = <span class="variable language_">this</span>.#map.<span class="title function_">get</span>(key);</span><br><span class="line">    <span class="comment">//删除当前key，添加到队列头部</span></span><br><span class="line">    <span class="variable language_">this</span>.#map.<span class="title function_">delete</span>(key);</span><br><span class="line">    <span class="variable language_">this</span>.#map.<span class="title function_">set</span>(key, value);</span><br><span class="line">    <span class="keyword">return</span> value;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">//设置缓存</span></span><br><span class="line">  <span class="title function_">set</span>(<span class="params">key, value</span>) &#123;</span><br><span class="line">    <span class="comment">//溢出，删除队列尾部</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="variable language_">this</span>.#map.<span class="property">size</span> &gt;= <span class="variable language_">this</span>.#length) &#123;</span><br><span class="line">      <span class="variable language_">this</span>.#map.<span class="title function_">delete</span>(<span class="variable language_">this</span>.#map.<span class="title function_">keys</span>().<span class="title function_">next</span>().<span class="property">value</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//修改缓存</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="variable language_">this</span>.<span class="title function_">has</span>(key)) &#123;</span><br><span class="line">      <span class="variable language_">this</span>.#map.<span class="title function_">delete</span>(key);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="variable language_">this</span>.#map.<span class="title function_">set</span>(key, value);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//测试</span></span><br><span class="line"><span class="keyword">let</span> cache = <span class="keyword">new</span> <span class="title class_">LRUCache</span>(<span class="number">3</span>);</span><br><span class="line">cache.<span class="title function_">set</span>(<span class="string">&quot;a&quot;</span>, <span class="number">1</span>);</span><br><span class="line">cache.<span class="title function_">set</span>(<span class="string">&quot;b&quot;</span>, <span class="number">2</span>);</span><br><span class="line">cache.<span class="title function_">set</span>(<span class="string">&quot;c&quot;</span>, <span class="number">3</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(cache);</span><br><span class="line"><span class="comment">// 0: &#123;&quot;a&quot; =&gt; 1&#125; 1: &#123;&quot;b&quot; =&gt; 2&#125;2: &#123;&quot;c&quot; =&gt; 3&#125;</span></span><br><span class="line">cache.<span class="title function_">get</span>(<span class="string">&quot;a&quot;</span>);</span><br><span class="line"><span class="comment">// 0: &#123;&quot;b&quot; =&gt; 2&#125;1: &#123;&quot;c&quot; =&gt; 3&#125;2: &#123;&quot;a&quot; =&gt; 1&#125;</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(cache);</span><br><span class="line">cache.<span class="title function_">set</span>(<span class="string">&quot;d&quot;</span>, <span class="number">4</span>);</span><br><span class="line"><span class="comment">//0: &#123;&quot;c&quot; =&gt; 3&#125;1: &#123;&quot;a&quot; =&gt; 1&#125;2: &#123;&quot;d&quot; =&gt; 4&#125;</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(cache);</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>前端</category>
+      </categories>
+      <tags>
+        <tag>js</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>搜索引擎优化</title>
+    <url>/2024/04/19/%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E%E4%BC%98%E5%8C%96/</url>
+    <content><![CDATA[<h1 id="搜索建议优化方案"><a href="#搜索建议优化方案" class="headerlink" title="搜索建议优化方案"></a>搜索建议优化方案</h1><h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><ul>
+<li>在搜索框中，用户输入关键词后，服务器会根据关键词自动补全，并展示在搜索框下方的下拉列表中，如果用户输入的很快，我们应该每个请求都发吗？请求的顺序是否能与响应的顺序一致？</li>
+</ul>
+<h2 id="目标"><a href="#目标" class="headerlink" title="目标"></a>目标</h2><ul>
+<li>保证用户输入的关键词与服务器返回的关键词顺序一致。</li>
+<li>减少请求次数。</li>
+</ul>
+<h2 id="方案"><a href="#方案" class="headerlink" title="方案"></a>方案</h2><ol>
+<li><strong>使用防抖</strong></li>
+</ol>
+<ul>
+<li>也就是在一段时间内只发送最后一次请求，一段时间内连续请求会取消上一次的请求。</li>
+<li>那如果用户在请求成功发送，服务器还没响应的期间再次发送请求呢？服务器能保证响应的顺序吗？</li>
+<li>所以防抖也没解决根源性问题。</li>
+</ul>
+<ol start="2">
+<li><strong>使用节流</strong></li>
+</ol>
+<ul>
+<li>也就是在一段时间内只发送第一次请求，后续请求不在处理。</li>
+<li>用户快速输入节流无法处理 。</li>
+</ul>
+<ol start="3">
+<li><strong>优解方案</strong></li>
+</ol>
+<ul>
+<li>在每次请求放送时，取消上一次的请求。<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> search = <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&quot;#app .search&quot;</span>);</span><br><span class="line"><span class="comment">//创建一个控制器</span></span><br><span class="line"><span class="keyword">let</span> controller;</span><br><span class="line">search.<span class="property">onchange</span> = <span class="keyword">async</span> (e) =&gt; &#123;</span><br><span class="line">  <span class="comment">//取消上一次的请求</span></span><br><span class="line">  controller &amp;&amp; controller.<span class="title function_">abort</span>();</span><br><span class="line">  controller = <span class="keyword">new</span> <span class="title class_">AbortController</span>();</span><br><span class="line">  <span class="keyword">const</span> res = <span class="keyword">await</span> <span class="title function_">fetch</span>(</span><br><span class="line">    <span class="string">&quot;http://localhost:3000/search?keyword=&quot;</span> + e.<span class="property">target</span>.<span class="property">value</span>,</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">method</span>: <span class="string">&quot;GET&quot;</span>,</span><br><span class="line">      <span class="comment">//关联控制器</span></span><br><span class="line">      <span class="attr">signal</span>: controller.<span class="property">signal</span>,</span><br><span class="line">    &#125;</span><br><span class="line">  );</span><br><span class="line">  <span class="keyword">const</span> data = <span class="keyword">await</span> res.<span class="title function_">json</span>();</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(data);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></li>
+</ul>
+]]></content>
+      <categories>
+        <category>前端</category>
+      </categories>
+      <tags>
+        <tag>js</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>scss模块化</title>
+    <url>/2024/04/16/scss%E6%A8%A1%E5%9D%97%E5%8C%96/</url>
+    <content><![CDATA[<h1 id="scss-模块化"><a href="#scss-模块化" class="headerlink" title="scss 模块化"></a>scss 模块化</h1><ol>
+<li>什么是模块化?<br>模块化是指将一个复杂的程序依据一定的规则封装成几个块,并进行组合在一起。</li>
+<li>scss 的模块化分为运行时与编译时</li>
+</ol>
+<ul>
+<li>运行时在以往的时候导入方式是使用 import url(‘xxx’)</li>
+<li>而编译时的导入方式与运行时大差不差，import ‘xxx’</li>
+<li>而这两种方式都差不多，容易混淆，让人无法一眼看出在干什么。</li>
+<li>所以 scss 提供了新的导入方式 @use</li>
+<li>一个成熟的模块化方式，需要解决变量污染,私有变量等问题</li>
+</ul>
+<figure class="highlight scss"><table><tr><td class="code"><pre><span class="line"><span class="comment">//支持导入别名</span></span><br><span class="line"><span class="keyword">@use</span> <span class="string">&quot;b.scss as a&quot;</span> <span class="keyword">@use</span> <span class="string">&quot;b.scss&quot;</span> // 支持命名空间</span><br><span class="line">  <span class="attribute">color</span>: a.<span class="variable">$color</span>;</span><br><span class="line"><span class="comment">//私有变量</span></span><br><span class="line">$_s: red;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>前端</category>
+      </categories>
+      <tags>
+        <tag>scss</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>并发</title>
+    <url>/2024/04/17/%E5%B9%B6%E5%8F%91/</url>
+    <content><![CDATA[<h1 id="什么是并发？"><a href="#什么是并发？" class="headerlink" title="什么是并发？"></a>什么是并发？</h1><ul>
+<li>你吃饭吃到一半，电话来了，你一直到吃完了以后才去接，这就说明你不支持并发也不支持<strong>并行</strong>。</li>
+<li>你吃饭吃到一半，电话来了，你停了下来接了电话，接完后继续吃饭，这说明你支持<strong>并发</strong>。</li>
+<li>你吃饭吃到一半，电话来了，你一边打电话一边吃饭，这说明你支持<strong>并行</strong>。</li>
+<li><strong>并发</strong>的关键就是需要能<strong>同时处理多个任务</strong>的能力，这个不一定是同时进行的。并行则关键是要能<strong>同时处理多个任务</strong>二者的关键区别在于是否具备同时性。</li>
+</ul>
+<h1 id="前端并发数量"><a href="#前端并发数量" class="headerlink" title="前端并发数量"></a>前端并发数量</h1><p>关于并发前端能做的就是控制请求数量，控制请求的频率，控制请求的耗时(个人见解)</p>
+<h1 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h1><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">async</span> <span class="keyword">function</span> <span class="title function_">conCurrent</span>(<span class="params">urls, max = <span class="number">2</span></span>) &#123;</span><br><span class="line">  <span class="keyword">const</span> urlList = urls.<span class="title function_">flat</span>(); <span class="comment">//扁平化数组</span></span><br><span class="line">  <span class="keyword">if</span> (urlList.<span class="property">length</span> === <span class="number">0</span>) <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Promise</span>.<span class="title function_">resolve</span>([]);</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Promise</span>(<span class="function">(<span class="params">resolve</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> result = []; <span class="comment">//存放结果数组</span></span><br><span class="line">    <span class="keyword">let</span> index = <span class="number">0</span>; <span class="comment">//指向下一个url</span></span><br><span class="line">    <span class="keyword">let</span> count = <span class="number">0</span>; <span class="comment">//当前完成上传数</span></span><br><span class="line">    <span class="keyword">const</span> <span class="title function_">run</span> = <span class="keyword">async</span> (<span class="params"></span>) =&gt; &#123;</span><br><span class="line">      <span class="keyword">const</span> url = urlList[index];</span><br><span class="line">      <span class="keyword">const</span> j = index;</span><br><span class="line">      <span class="keyword">try</span> &#123;</span><br><span class="line">        result[j] = <span class="keyword">await</span> <span class="title function_">axios</span>(url);</span><br><span class="line">        index++;</span><br><span class="line">      &#125; <span class="keyword">catch</span> (err) &#123;</span><br><span class="line">        result[j] = err;</span><br><span class="line">      &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        count++;</span><br><span class="line">        <span class="keyword">if</span> (count === urlList.<span class="property">length</span>) <span class="title function_">resolve</span>(result);</span><br><span class="line">        <span class="keyword">if</span> (index &lt; urlList.<span class="property">length</span>) <span class="keyword">await</span> <span class="title function_">run</span>();</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; <span class="title class_">Math</span>.<span class="title function_">min</span>(urlList.<span class="property">length</span>, max); i++) &#123;</span><br><span class="line">      <span class="title function_">run</span>();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">const</span> <span class="title function_">axios</span> = (<span class="params">date</span>) =&gt; &#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Promise</span>(<span class="function">(<span class="params">resolve</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">      <span class="title function_">resolve</span>(date);</span><br><span class="line">    &#125;, <span class="number">1000</span>);</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>前端</category>
+      </categories>
+      <tags>
+        <tag>js</tag>
+      </tags>
+  </entry>
+</search>
