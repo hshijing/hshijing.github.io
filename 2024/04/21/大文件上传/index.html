@@ -1,0 +1,296 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>大文件上传 | </title><meta name="author" content="黄信殿"><meta name="copyright" content="黄信殿"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="大文件切片上传 拿到文件对象 使用线程切割文件 拿到切片数组循环上传 上传完毕后通知后端合并文件  后端服务import cors from &quot;cors&quot;;import multer from &quot;multer&quot;;import express from &quot;express&quot;;import fs from &quot;node:fs&quot;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="大文件上传">
+<meta property="og:url" content="https://hshijing.github.io/2024/04/21/%E5%A4%A7%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/index.html">
+<meta property="og:site_name">
+<meta property="og:description" content="大文件切片上传 拿到文件对象 使用线程切割文件 拿到切片数组循环上传 上传完毕后通知后端合并文件  后端服务import cors from &quot;cors&quot;;import multer from &quot;multer&quot;;import express from &quot;express&quot;;import fs from &quot;node:fs&quot;">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hshijing.github.io/img/fileUpload.png">
+<meta property="article:published_time" content="2024-04-20T20:22:22.000Z">
+<meta property="article:modified_time" content="2024-04-20T20:16:23.584Z">
+<meta property="article:author" content="黄信殿">
+<meta property="article:tag" content="js">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hshijing.github.io/img/fileUpload.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://hshijing.github.io/2024/04/21/%E5%A4%A7%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//hm.baidu.com"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=4.13.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?88be66daa793a035a357a216da6519e6";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":300},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.11.1/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: true
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '大文件上传',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: true,
+  isToc: true,
+  postUpdate: '2024-04-21 04:16:23'
+}</script><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+          const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+          const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+          const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+          if (t === undefined) {
+            if (isLightMode) activateLightMode()
+            else if (isDarkMode) activateDarkMode()
+            else if (isNotSpecified || hasNoSupport) {
+              const now = new Date()
+              const hour = now.getHours()
+              const isNight = hour <= 6 || hour >= 18
+              isNight ? activateDarkMode() : activateLightMode()
+            }
+            window.matchMedia('(prefers-color-scheme: dark)').addListener(e => {
+              if (saveToLocal.get('theme') === undefined) {
+                e.matches ? activateDarkMode() : activateLightMode()
+              }
+            })
+          } else if (t === 'light') activateLightMode()
+          else activateDarkMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><!-- hexo injector head_end start --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Zfour/Butterfly-card-history/baiduhistory/css/main.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Zfour/hexo-electric-clock@1.0.6/clock.css"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.2.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/g4925.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">9</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">5</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/../img/fileUpload.png')"><nav id="nav"><span id="blog-info"><a href="/" title=""></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">大文件上传</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-04-20T20:22:22.000Z" title="发表于 2024-04-21 04:22:22">2024-04-21</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-04-20T20:16:23.584Z" title="更新于 2024-04-21 04:16:23">2024-04-21</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%89%8D%E7%AB%AF/">前端</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="大文件上传"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="大文件切片上传"><a href="#大文件切片上传" class="headerlink" title="大文件切片上传"></a>大文件切片上传</h1><ol>
+<li>拿到文件对象</li>
+<li>使用线程切割文件</li>
+<li>拿到切片数组循环上传</li>
+<li>上传完毕后通知后端合并文件</li>
+</ol>
+<h1 id="后端服务"><a href="#后端服务" class="headerlink" title="后端服务"></a>后端服务</h1><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> cors <span class="keyword">from</span> <span class="string">&quot;cors&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> multer <span class="keyword">from</span> <span class="string">&quot;multer&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> express <span class="keyword">from</span> <span class="string">&quot;express&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> fs <span class="keyword">from</span> <span class="string">&quot;node:fs&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> path <span class="keyword">from</span> <span class="string">&quot;node:path&quot;</span>;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 大文件上传</span></span><br><span class="line"><span class="comment"> * 1. 客户端切片上传文件(给每个文件打上hash)</span></span><br><span class="line"><span class="comment"> * 2. 服务端接收切片, 切片合并</span></span><br><span class="line"><span class="comment"> * 3. 切片上传失败, 切片重传</span></span><br><span class="line"><span class="comment"> * 4. 切片上传成功, 通知服务端合并切片</span></span><br><span class="line"><span class="comment"> * 5. 合并切片成功, 通知客户端上传完成</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//初始化multer</span></span><br><span class="line"><span class="keyword">const</span> storage = multer.<span class="title function_">diskStorage</span>(&#123;</span><br><span class="line">  <span class="comment">//文件保存路径</span></span><br><span class="line">  <span class="attr">destination</span>: <span class="keyword">function</span> (<span class="params">req, file, cb</span>) &#123;</span><br><span class="line">    <span class="title function_">cb</span>(<span class="literal">null</span>, path.<span class="title function_">resolve</span>(__dirname, <span class="string">&quot;./test/uploads/&quot;</span>));</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="comment">//文件重命名</span></span><br><span class="line">  <span class="attr">filename</span>: <span class="keyword">function</span> (<span class="params">req, file, cb</span>) &#123;</span><br><span class="line">    <span class="title function_">cb</span>(<span class="literal">null</span>, <span class="title class_">Date</span>.<span class="title function_">now</span>() + <span class="string">&quot;-&quot;</span> + req.<span class="property">body</span>.<span class="property">fileName</span>);</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;);</span><br><span class="line"><span class="comment">//初始化multer</span></span><br><span class="line"><span class="keyword">const</span> upload = <span class="title function_">multer</span>(&#123; <span class="attr">storage</span>: storage &#125;);</span><br><span class="line"><span class="keyword">const</span> app = <span class="title function_">express</span>();</span><br><span class="line">app.<span class="title function_">use</span>(<span class="title function_">cors</span>());</span><br><span class="line">app.<span class="title function_">use</span>(express.<span class="title function_">json</span>());</span><br><span class="line"><span class="comment">//接收客户端上传的切片 chunk要与前端文件对象key一致</span></span><br><span class="line">app.<span class="title function_">post</span>(<span class="string">&quot;/upload&quot;</span>, upload.<span class="title function_">single</span>(<span class="string">&quot;chunk&quot;</span>), <span class="function">(<span class="params">req, res</span>) =&gt;</span> &#123;</span><br><span class="line">  res.<span class="title function_">send</span>(&#123; <span class="attr">ok</span>: <span class="literal">true</span> &#125;);</span><br><span class="line">&#125;);</span><br><span class="line"><span class="comment">//合并切片</span></span><br><span class="line">app.<span class="title function_">post</span>(<span class="string">&quot;/merge&quot;</span>, <span class="keyword">async</span> (req, res) =&gt; &#123;</span><br><span class="line">  <span class="comment">//读取切片内容</span></span><br><span class="line">  <span class="keyword">const</span> uploadDir = path.<span class="title function_">join</span>(__dirname, <span class="string">&quot;./test/uploads/&quot;</span>);</span><br><span class="line">  <span class="comment">//读取目录下的文件</span></span><br><span class="line">  <span class="keyword">let</span> dirs = fs.<span class="title function_">readdirSync</span>(uploadDir);</span><br><span class="line">  <span class="comment">//根据时间戳排序</span></span><br><span class="line">  dirs.<span class="title function_">sort</span>(<span class="function">(<span class="params">a, b</span>) =&gt;</span> a.<span class="title function_">localeCompare</span>(b, <span class="string">&quot;zh-CN&quot;</span>));</span><br><span class="line">  <span class="comment">//合并目标路径</span></span><br><span class="line">  <span class="keyword">const</span> video = path.<span class="title function_">join</span>(</span><br><span class="line">    __dirname,</span><br><span class="line">    <span class="string">&quot;./test/video&quot;</span>,</span><br><span class="line">    <span class="string">`<span class="subst">$&#123;req.query.fileName&#125;</span>.mp4`</span></span><br><span class="line">  );</span><br><span class="line">  <span class="comment">//合并切片</span></span><br><span class="line">  dirs.<span class="title function_">forEach</span>(<span class="function">(<span class="params">item</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="comment">//读取文件内容</span></span><br><span class="line">    <span class="keyword">const</span> data = fs.<span class="title function_">readFileSync</span>(path.<span class="title function_">join</span>(uploadDir, item));</span><br><span class="line">    <span class="comment">//写入文件(合并)</span></span><br><span class="line">    fs.<span class="title function_">appendFileSync</span>(video, data);</span><br><span class="line">    <span class="comment">//删除切片文件</span></span><br><span class="line">    fs.<span class="title function_">unlinkSync</span>(path.<span class="title function_">join</span>(uploadDir, item));</span><br><span class="line">  &#125;);</span><br><span class="line">  res.<span class="title function_">send</span>(&#123; <span class="attr">ok</span>: <span class="literal">true</span> &#125;);</span><br><span class="line">&#125;);</span><br><span class="line">app.<span class="title function_">listen</span>(<span class="number">8080</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&quot;server is running at http://localhost:8080&quot;</span>);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<h1 id="前端实现"><a href="#前端实现" class="headerlink" title="前端实现"></a>前端实现</h1><figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">&quot;en&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">&quot;UTF-8&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>大文件分片<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;file&quot;</span> <span class="attr">class</span>=<span class="string">&quot;input&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">&quot;./main.js&quot;</span> <span class="attr">type</span>=<span class="string">&quot;module&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>main.js</strong></p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; cutFile &#125; <span class="keyword">from</span> <span class="string">&quot;./cutFile.js&quot;</span>;</span><br><span class="line"><span class="comment">//获取文件</span></span><br><span class="line"><span class="keyword">const</span> fileDom = <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&quot;.input&quot;</span>);</span><br><span class="line"></span><br><span class="line">fileDom.<span class="property">onchange</span> = <span class="keyword">async</span> (e) =&gt; &#123;</span><br><span class="line">  <span class="keyword">const</span> file = e.<span class="property">target</span>.<span class="property">files</span>;</span><br><span class="line">  <span class="keyword">const</span> chunks = <span class="keyword">await</span> <span class="title function_">cutFile</span>(file[<span class="number">0</span>]);</span><br><span class="line">  <span class="keyword">const</span> list = [];</span><br><span class="line">  <span class="comment">//上传分片</span></span><br><span class="line">  chunks.<span class="title function_">forEach</span>(<span class="function">(<span class="params">chunk</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> formData = <span class="keyword">new</span> <span class="title class_">FormData</span>();</span><br><span class="line">    formData.<span class="title function_">append</span>(<span class="string">&quot;hash&quot;</span>, chunk.<span class="property">spark</span>);</span><br><span class="line">    formData.<span class="title function_">append</span>(<span class="string">&quot;index&quot;</span>, chunk.<span class="property">index</span>);</span><br><span class="line">    formData.<span class="title function_">append</span>(<span class="string">&quot;chunk&quot;</span>, chunk.<span class="property">blob</span>);</span><br><span class="line">    <span class="comment">//上传</span></span><br><span class="line">    list.<span class="title function_">push</span>(</span><br><span class="line">      <span class="title function_">fetch</span>(<span class="string">&quot;http://localhost:8080/upload&quot;</span>, &#123;</span><br><span class="line">        <span class="attr">method</span>: <span class="string">&quot;POST&quot;</span>,</span><br><span class="line">        <span class="attr">body</span>: formData,</span><br><span class="line">      &#125;)</span><br><span class="line">    );</span><br><span class="line">  &#125;);</span><br><span class="line">  <span class="comment">//通知后端合并</span></span><br><span class="line">  <span class="title class_">Promise</span>.<span class="title function_">all</span>(list).<span class="title function_">then</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="title function_">fetch</span>(<span class="string">&quot;http://127.0.0.1:8080/merge?fileName=李世民&quot;</span>, &#123;</span><br><span class="line">      <span class="attr">method</span>: <span class="string">&quot;POST&quot;</span>,</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p><strong>cutFile.js</strong></p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="variable constant_">FILE_SIZE</span> = <span class="number">1024</span> * <span class="number">1024</span> * <span class="number">5</span>; <span class="comment">//文件大小限制</span></span><br><span class="line"><span class="keyword">const</span> <span class="variable constant_">CUP_NUM</span> = navigator.<span class="property">hardwareConcurrency</span> || <span class="number">4</span>; <span class="comment">//线程数量</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">function</span> <span class="title function_">cutFile</span>(<span class="params">file</span>) &#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Promise</span>(<span class="function">(<span class="params">resolve</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> fileCount = <span class="title class_">Math</span>.<span class="title function_">ceil</span>(file.<span class="property">size</span> / <span class="variable constant_">FILE_SIZE</span>); <span class="comment">// 文件分片数量</span></span><br><span class="line">    <span class="keyword">const</span> taskNum = <span class="title class_">Math</span>.<span class="title function_">ceil</span>(fileCount / <span class="variable constant_">CUP_NUM</span>); <span class="comment">//每个线程分配任务数量</span></span><br><span class="line">    <span class="keyword">let</span> doneNum = <span class="number">0</span>; <span class="comment">//完成线程数</span></span><br><span class="line">    <span class="keyword">const</span> result = []; <span class="comment">//存放结果</span></span><br><span class="line">    <span class="comment">//创建一个线程并分配任务</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>, len = <span class="variable constant_">CUP_NUM</span>; i &lt; len; i++) &#123;</span><br><span class="line">      <span class="keyword">const</span> start = i * taskNum; <span class="comment">//每个线程处理任务数</span></span><br><span class="line">      <span class="keyword">let</span> end = (i + <span class="number">1</span>) * taskNum; <span class="comment">//下一个线程处理任务数</span></span><br><span class="line">      <span class="keyword">if</span> (end &gt; fileCount) end = fileCount;</span><br><span class="line">      <span class="comment">//创建线程</span></span><br><span class="line">      <span class="keyword">const</span> worker = <span class="keyword">new</span> <span class="title class_">Worker</span>(<span class="string">&quot;./worker.js&quot;</span>, &#123;</span><br><span class="line">        <span class="attr">type</span>: <span class="string">&quot;module&quot;</span>,</span><br><span class="line">      &#125;);</span><br><span class="line">      <span class="comment">//给线程传递数据</span></span><br><span class="line">      worker.<span class="title function_">postMessage</span>(&#123;</span><br><span class="line">        file,</span><br><span class="line">        fileCount,</span><br><span class="line">        start,</span><br><span class="line">        end,</span><br><span class="line">      &#125;);</span><br><span class="line">      <span class="comment">//监听线程返回结果</span></span><br><span class="line">      worker.<span class="property">onmessage</span> = <span class="function">(<span class="params">e</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">let</span> i = start, len = end; i &lt; len; i++) &#123;</span><br><span class="line">          result[i] = e.<span class="property">data</span>[i - start];</span><br><span class="line">        &#125;</span><br><span class="line">        worker.<span class="title function_">terminate</span>(); <span class="comment">//销毁线程</span></span><br><span class="line">        doneNum++;</span><br><span class="line">        <span class="comment">//判断是否所有线程执行完毕</span></span><br><span class="line">        doneNum === <span class="variable constant_">CUP_NUM</span> ? <span class="title function_">resolve</span>(result) : <span class="string">&quot;&quot;</span>;</span><br><span class="line">      &#125;;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>worker.js</strong></p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; createChunk &#125; <span class="keyword">from</span> <span class="string">&quot;./createChunk.js&quot;</span>;</span><br><span class="line">onmessage = <span class="keyword">async</span> (e) =&gt; &#123;</span><br><span class="line">  <span class="keyword">const</span> &#123; file, fileCount, start, end &#125; = e.<span class="property">data</span>;</span><br><span class="line">  <span class="keyword">const</span> proms = [];</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">let</span> i = start, len = end; i &lt; len; i++) &#123;</span><br><span class="line">    <span class="keyword">const</span> chunk = <span class="keyword">await</span> <span class="title function_">createChunk</span>(file, i, fileCount);</span><br><span class="line">    proms.<span class="title function_">push</span>(chunk);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">const</span> chunks = <span class="keyword">await</span> <span class="title class_">Promise</span>.<span class="title function_">all</span>(proms);</span><br><span class="line">  <span class="title function_">postMessage</span>(chunks);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p><strong>createChunk.js</strong><br>由于我使用<strong>spark-md5</strong>来进行唯一标识的时候，浏览器网络控制台无法返回期望信息<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/../img/error.png" alt="error">，也不给我报错，单纯引入这个库都没使用都会返回无法加载。可是我在vue又能用?希望有大佬解答下。所以我使用<strong>随机数</strong>来模拟唯一标识。</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 创建分片</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> file &#123;File&#125; 文件对象</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> index &#123;number&#125; 当前分片索引</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> chunkSize  &#123;number&#125; 分片大小</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">async</span> <span class="keyword">function</span> <span class="title function_">createChunk</span>(<span class="params">file, index, chunkSize</span>) &#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Promise</span>(<span class="function">(<span class="params">resolve</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> start = index * chunkSize; <span class="comment">//当前分片起始位置</span></span><br><span class="line">    <span class="keyword">const</span> end = start + chunkSize; <span class="comment">//当前分片结束位置</span></span><br><span class="line">    <span class="keyword">const</span> spark = <span class="title class_">Math</span>.<span class="title function_">random</span>() * <span class="number">1000</span>; <span class="comment">//随机数 标识是否为同一分段</span></span><br><span class="line">    <span class="keyword">const</span> blob = file.<span class="title function_">slice</span>(start, end); <span class="comment">//总分片 服务器需要的字段</span></span><br><span class="line">    <span class="keyword">const</span> reader = <span class="keyword">new</span> <span class="title class_">FileReader</span>(); <span class="comment">//文件对象</span></span><br><span class="line">    <span class="comment">//文件完成加载</span></span><br><span class="line">    reader.<span class="property">onload</span> = <span class="function">(<span class="params">e</span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="title function_">resolve</span>(&#123;</span><br><span class="line">        start,</span><br><span class="line">        end,</span><br><span class="line">        index,</span><br><span class="line">        blob,</span><br><span class="line">        spark,</span><br><span class="line">      &#125;);</span><br><span class="line">    &#125;;</span><br><span class="line">    reader.<span class="title function_">readAsArrayBuffer</span>(blob);</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://hshijing.github.io">黄信殿</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://hshijing.github.io/2024/04/21/%E5%A4%A7%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/">https://hshijing.github.io/2024/04/21/%E5%A4%A7%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://hshijing.github.io" target="_blank"></a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/js/">js</a></div><div class="post_share"><div class="social-share" data-image="/../img/fileUpload.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2024/04/20/420/" title="4.20随记"><img class="cover" src="/../img/daSan.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">4.20随记</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2024/04/16/forEach/" title="深入forEach"><img class="cover" src="/../img/forEach.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-04-16</div><div class="title">深入forEach</div></div></a></div><div><a href="/2024/04/17/LRU/" title="LRU缓存置换"><img class="cover" src="/../img/taiKong.jpeg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-04-17</div><div class="title">LRU缓存置换</div></div></a></div><div><a href="/2024/04/17/%E5%B9%B6%E5%8F%91/" title="并发"><img class="cover" src="/../img/g4925.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-04-17</div><div class="title">并发</div></div></a></div><div><a href="/2024/04/19/%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E%E4%BC%98%E5%8C%96/" title="搜索引擎优化"><img class="cover" src="/../img/yejing.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-04-19</div><div class="title">搜索引擎优化</div></div></a></div></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="lv-container" data-id="city" data-uid="MTAyMC81OTc1NS8zNjIxNw=="></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/g4925.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">黄信殿</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">9</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">5</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hshijing"><i class="fab fa-github"></i><span>Github</span></a></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%A4%A7%E6%96%87%E4%BB%B6%E5%88%87%E7%89%87%E4%B8%8A%E4%BC%A0"><span class="toc-number">1.</span> <span class="toc-text">大文件切片上传</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%90%8E%E7%AB%AF%E6%9C%8D%E5%8A%A1"><span class="toc-number">2.</span> <span class="toc-text">后端服务</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E7%AB%AF%E5%AE%9E%E7%8E%B0"><span class="toc-number">3.</span> <span class="toc-text">前端实现</span></a></li></ol></div></div></div></div></main><footer id="footer" style="background-image: url('/url(https:/pic2.zhimg.com/v2-24dfbd91377c5d17333b0a9f5cddea84_r.jpg?source=1940ef5c)')"><div id="footer-wrap"><div class="copyright">&copy;2024 By 黄信殿</div><div class="footer_custom_text">Eamil:2097294126@qq.com</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="chat-btn" type="button" title="聊天"><i class="fas fa-sms"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=4.13.0"></script><script src="/js/main.js?v=4.13.0"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page@5.2.0/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.8.8/dist/lazyload.iife.min.js"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (false){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><div class="js-pjax"><script>(() => {
+  const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+  if ($mermaid.length === 0) return
+  const runMermaid = () => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+    Array.from($mermaid).forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = '%%{init:{ \'theme\':\'' + theme + '\'}}%%\n'
+      const mermaidID = 'mermaid-' + index
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+
+      const renderV10 = () => {
+        renderFn.then(({svg}) => {
+          mermaidSrc.insertAdjacentHTML('afterend', svg)
+        })
+      }
+
+      const renderV9 = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      typeof renderFn === 'string' ? renderV9(renderFn) : renderV10()
+    })
+  }
+
+  const loadMermaid = () => {
+    window.loadMermaid ? runMermaid() : getScript('https://cdn.jsdelivr.net/npm/mermaid@10.8.0/dist/mermaid.min.js').then(runMermaid)
+  }
+
+  btf.addGlobalFn('themeChange', runMermaid, 'mermaid')
+
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><script>(()=>{
+  const loadLivere = () => {
+    if (typeof LivereTower === 'object') window.LivereTower.init()
+    else {
+      (function(d, s) {
+          var j, e = d.getElementsByTagName(s)[0];
+          if (typeof LivereTower === 'function') { return; }
+          j = d.createElement(s);
+          j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+          j.async = true;
+          e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    }
+  }
+
+  if ('Livere' === 'Livere' || !false) {
+    if (false) btf.loadComment(document.getElementById('lv-container'), loadLivere)
+    else loadLivere()
+  } else {
+    window.loadOtherComment = loadLivere
+  }
+})()</script></div><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/dist/canvas-fluttering-ribbon.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=4.13.0"></script></div></div><!-- hexo injector body_end start --><script data-pjax>function history_calendar_injector_config(){
+                var parent_div_git = document.getElementsByClassName('sticky_layout')[0];
+                var item_html = '<div class="card-widget card-history"><div class="card-content"><div class="item-headline"><i class="fas fa-clock fa-spin"></i><span>那年今日</span></div><div id="history-baidu" style="height: 100px;overflow: hidden"><div class="history_swiper-container" id="history-container" style="width: 100%;height: 100%"><div class="swiper-wrapper" id="history_container_wrapper" style="height:20px"></div></div></div></div>';
+                console.log('已挂载history_calendar')
+                // parent_div_git.innerHTML=item_html+parent_div_git.innerHTML // 无报错，但不影响使用(支持pjax跳转)
+                parent_div_git.insertAdjacentHTML("afterbegin",item_html) // 有报错，但不影响使用(支持pjax跳转)
+            }if( document.getElementsByClassName('sticky_layout')[0] && (location.pathname ==='all'|| 'all' ==='all')){
+
+            history_calendar_injector_config()
+        } </script><script data-pjax  src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script><script data-pjax src="https://cdn.jsdelivr.net/gh/Zfour/Butterfly-card-history/baiduhistory/js/main.js"></script><script data-pjax>function electric_clock_injector_config(){
+                var parent_div_git = document.getElementsByClassName('sticky_layout')[0];
+                var item_html = '<div class="card-widget card-clock"><div class="card-glass"><div class="card-background"><div class="card-content"><div id="hexo_electric_clock"><img id="card-clock-loading" src="https://cdn.jsdelivr.net/gh/Zfour/Butterfly-clock/clock/images/weather/loading.gif" style="height: 120px; width: 100%;" data-ll-status="loading" class="entered loading"></div></div></div></div></div>';
+                console.log('已挂载electric_clock')
+                // parent_div_git.innerHTML=item_html+parent_div_git.innerHTML // 无报错，但不影响使用(支持pjax跳转)
+                parent_div_git.insertAdjacentHTML("afterbegin",item_html) // 有报错，但不影响使用(支持pjax跳转)
+            }if( document.getElementsByClassName('sticky_layout')[0] && (location.pathname ==='all'|| 'all' ==='all')){
+
+            electric_clock_injector_config()
+        } </script><script src="https://pv.sohu.com/cityjson?ie=utf-8"></script><script data-pjax  src="https://cdn.jsdelivr.net/gh/Zfour/hexo-electric-clock@1.0.6/clock.js"></script><!-- hexo injector body_end end --></body></html>
